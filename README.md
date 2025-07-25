@@ -1,98 +1,191 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🗓️ Role-Based Booking API (NestJS + MongoDB)
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A backend system for **role-based availability and slot booking**, supporting two roles: `User` and `Admin`.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🛠️ Tech Stack
 
-## Description
+- **Node.js / NestJS** (v10+)
+- **MongoDB** with Mongoose
+- **JWT** Authentication
+- **Swagger** API Docs
+- **Role-Based Access Control (RBAC)**
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 📁 Project Structure
 
-## Project setup
-
-```bash
-$ npm install
+```
+src/
+│
+├── auth/               # Authentication module (login)
+├── users/              # User registration, schema
+├── availability/       # Availability creation logic
+├── booking/            # Slot booking and admin view
+├── common/guards/      # Auth & Role guards
+├── main.ts             # Entry point
+├── app.module.ts       # App root module
 ```
 
-## Compile and run the project
+## ✅ Features
 
-```bash
-# development
-$ npm run start
+### 🔐 Auth
 
-# watch mode
-$ npm run start:dev
+- JWT-based login
+- Supports **User** and **Admin** roles
+- Role info included in token
 
-# production mode
-$ npm run start:prod
+### 👤 User APIs
+
+- **Create Availability**
+  - Fields: `date`, `startTime`, `endTime`
+  - Date allowed: Today up to 7 days ahead
+  - Example:
+    ```json
+    {
+      "date": "2025-07-25",
+      "startTime": "10:00",
+      "endTime": "12:00"
+    }
+    ```
+
+### 🧑‍💼 Admin APIs
+
+- **View Available Slots**
+  - Fetches all user availabilities
+  - Breaks them into **30-minute intervals**
+  - Excludes:
+    - Slots < 30 minutes
+    - Booked slots
+    - Adjacent to booked slots
+
+- **Book Slot**
+  - Input: `userId`, `date`, `startTime`
+  - Marks slot as `booked: true`
+  - Example:
+    ```json
+    {
+      "userId": "<userId>",
+      "date": "2025-07-25",
+      "startTime": "10:30"
+    }
+    ```
+
+## 🔑 Authentication
+
+### 🪪 Login (Admin / User)
+
+**POST** `/auth/login`
+
+```json
+{
+  "email": "admin@example.com",
+  "password": "admin123"
+}
 ```
 
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+Response:
+```json
+{
+  "access_token": "<JWT_TOKEN>"
+}
 ```
 
-## Deployment
+Use `Bearer <token>` in Swagger or headers.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## 🔐 Protected Routes
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+| Role  | Endpoint                          | Description                     |
+|-------|-----------------------------------|---------------------------------|
+| User  | `POST /availability`              | Add availability                |
+| Admin | `GET /booking/slots?date=YYYY-MM-DD` | View slots (30-min filtered) |
+| Admin | `POST /booking/book`              | Book a slot                     |
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+## 🧪 Swagger API Docs
+
+Run the app and open:
+
+```
+http://localhost:3000/api
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Use the **Authorize** button to test with JWT token:
+```
+Bearer <your_token>
+```
 
-## Resources
+## 🧾 Environment Variables
 
-Check out a few resources that may come in handy when working with NestJS:
+Create `.env` file:
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```env
+PORT=3000
+JWT_SECRET=your_secret_key
+MONGO_URI=mongodb://localhost:27017/bookingdb
+JWT_EXPIRES_IN=1d
+```
 
-## Support
+## 🧬 Database Models
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### User
 
-## Stay in touch
+```ts
+{
+  _id,
+  email: string,
+  password: string (hashed),
+  role: 'User' | 'Admin'
+}
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Availability
 
-## License
+```ts
+{
+  _id,
+  userId: ObjectId,
+  date: 'YYYY-MM-DD',
+  startTime: 'HH:mm',
+  endTime: 'HH:mm',
+  booked: boolean
+}
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## ▶️ Getting Started
+
+```bash
+# Install dependencies
+npm install
+
+# Run in dev mode
+npm run start:dev
+
+# Build
+npm run build
+```
+
+## 🧪 Test Credentials
+
+### Admin
+```
+email: admin@example.com
+password: admin123
+```
+
+### User
+```
+email: user@example.com
+password: user123
+```
+
+## 📦 Seed Data (Optional)
+
+You can create default admin/user manually or via seed script (optional).
+
+## 📌 Notes
+
+- 30-minute slots are dynamically generated.
+- Slots < 30 minutes are ignored.
+- Booked & adjacent slots are hidden from Admin view.
+- Full Role-Based API protection in place.
+
+## 📄 License
+
+MIT
