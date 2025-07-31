@@ -2,7 +2,7 @@ import { Body, Controller, Post, UnauthorizedException } from '@nestjs/common';
 import { ApiTags, ApiBody } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 
-@ApiTags('Auth')
+@ApiTags('Auth') 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}

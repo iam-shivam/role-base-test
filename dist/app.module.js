@@ -24,8 +24,6 @@ const user_service_1 = require("./user/user.service");
 const mongoose_1 = require("@nestjs/mongoose");
 const config_1 = require("@nestjs/config");
 const user_schema_1 = require("./user/schema/user.schema");
-const core_1 = require("@nestjs/core");
-const roles_guard_1 = require("./auth/roles/roles.guard");
 const availability_service_1 = require("./availability/availability.service");
 const availability_schema_1 = require("./availability/schemas/availability.schema");
 let AppModule = class AppModule {
@@ -49,10 +47,6 @@ exports.AppModule = AppModule = __decorate([
         ],
         controllers: [app_controller_1.AppController, auth_controller_1.AuthController, user_controller_1.UserController, availability_controller_1.AvailabilityController],
         providers: [
-            {
-                provide: core_1.APP_GUARD,
-                useClass: roles_guard_1.RolesGuard,
-            },
             app_service_1.AppService,
             auth_service_1.AuthService, user_service_1.UserService, slots_service_1.SlotsService, seed_service_1.SeederService, availability_service_1.AvailabilityService
         ],

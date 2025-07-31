@@ -25,8 +25,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     PassportModule, // Register Passport with JWT strategy
     UserModule, // ✅ required to inject UserService
   ],
-  providers: [JwtStrategy,AuthService, ],
-  controllers: [AuthController],
-  exports: [JwtModule], // Export JwtModule for use in other modules
+  providers: [JwtStrategy,AuthService ],
+  exports: [AuthService,JwtModule], // Export JwtModule for use in other modules
 })
 export class AuthModule {}

@@ -36,10 +36,6 @@ import { Availability, AvailabilitySchema } from './availability/schemas/availab
     SlotsModule],
   controllers: [AppController, AuthController, UserController, AvailabilityController],
   providers: [
-    {
-    provide: APP_GUARD,
-    useClass: RolesGuard,
-  },
     AppService,
      AuthService, UserService, SlotsService, SeederService,AvailabilityService
   ],

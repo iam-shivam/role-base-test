@@ -13,10 +13,10 @@ export class User {
   @Prop({ required: true, unique: true })
   email: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true }) // Exclude password from queries by default
   password: string;
 
-  @Prop({ required: true, enum: Role, default: Role.User }) 
+  @Prop({ enum: Role, default: Role.User }) 
   role: Role;
 }
 

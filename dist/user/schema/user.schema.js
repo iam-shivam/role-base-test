@@ -32,7 +32,7 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "password", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ required: true, enum: roles_enum_1.Role, default: roles_enum_1.Role.User }),
+    (0, mongoose_1.Prop)({ enum: roles_enum_1.Role, default: roles_enum_1.Role.User }),
     __metadata("design:type", String)
 ], User.prototype, "role", void 0);
 exports.User = User = __decorate([

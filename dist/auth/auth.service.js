@@ -21,9 +21,12 @@ let AuthService = class AuthService {
         this.usersService = usersService;
         this.jwtService = jwtService;
     }
-    async validateUser(email, pass) {
+    async validateUser(email, password) {
         const user = await this.usersService.findByEmail(email);
-        if (user && await bcrypt.compare(pass, user.password)) {
+        if (!user) {
+            throw new common_1.UnauthorizedException('User not found');
+        }
+        if (user && await bcrypt.compare(password, user.password)) {
             const { password, ...result } = user.toObject();
             return result;
         }

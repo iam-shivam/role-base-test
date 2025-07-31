@@ -10,7 +10,6 @@ exports.AuthModule = void 0;
 const common_1 = require("@nestjs/common");
 const jwt_1 = require("@nestjs/jwt");
 const auth_service_1 = require("./auth.service");
-const auth_controller_1 = require("./auth.controller");
 const user_module_1 = require("../user/user.module");
 const passport_1 = require("@nestjs/passport");
 const config_1 = require("@nestjs/config");
@@ -35,9 +34,8 @@ exports.AuthModule = AuthModule = __decorate([
             passport_1.PassportModule,
             user_module_1.UserModule,
         ],
-        providers: [jwt_strategy_1.JwtStrategy, auth_service_1.AuthService,],
-        controllers: [auth_controller_1.AuthController],
-        exports: [jwt_1.JwtModule],
+        providers: [jwt_strategy_1.JwtStrategy, auth_service_1.AuthService],
+        exports: [auth_service_1.AuthService, jwt_1.JwtModule],
     })
 ], AuthModule);
 //# sourceMappingURL=auth.module.js.map
